@@ -1,4 +1,4 @@
-import React, { useState,useReducer } from "react";
+import React, { useState,useEffect } from "react";
 import "./../styles/App.css";
 
 
@@ -138,15 +138,113 @@ const states = [{
 }];
 
 
+
 function App() 
 {
 	// Do not alter/remove main div
-	 return (
-        <div id="main">
-            <States states={states} />
-        </div>
-    );
-}
+	const [currentState, setcurrentState] = useState(states[0])
+	const [currentCity, setCurrentCity] = useState(currentState.city[0])
+	const [currentLandMark, setCurrentLandMark] = useState(currentCity.landmarks[0])
 
+	const [stateDescription, setStateDescription] = useState(currentState.description);
+	const [cityDescription, setCityDescription] = useState(currentCity.description)
+	const [landmarkDescription, setLandmarkDescription] = useState(currentLandMark.description)
+
+
+
+	const loadStates = () =>{
+
+		return states.map((state,index) =>{
+			// console.log(state)
+			return <option value = {index} id ="state-name">{state.name}</option>
+		})
+	}
+
+	const loadCities = () =>{
+		
+		return currentState.city.map((city,index) => {
+			return <option value={index} id ="city-name" >{city.name}</option>
+		});
+	}
+
+	const loadLandmarks = () =>{
+		
+		return currentCity.landmarks.map((landmark,index) => {
+			return <option value={index} id ="landmark-name">{landmark.name}</option>
+		})
+	}
+	
+	const handleStateChange = (e) =>{
+		
+		const newState = states[e.target.value];
+		setcurrentState(newState);
+
+	
+	}
+
+	const handleCityChange = (e) =>{
+
+		const newCity = currentState.city[e.target.value];
+		setCurrentCity(newCity);
+	}
+
+
+	const handleLandmarkChange = (e) =>{
+		const newLandMark = currentCity.landmarks[e.target.value];
+		setCurrentLandMark(newLandMark);
+	}
+
+	useEffect(() => {
+		setStateDescription(currentState.description);
+		setCurrentCity(currentState.city[0]);
+	}, [currentState])
+
+	useEffect(() => {
+		
+		setCityDescription(currentCity.description)		
+		setCurrentLandMark(currentCity.landmarks[0])
+	}, [currentCity])
+	
+	useEffect(() => {
+
+		setLandmarkDescription(currentLandMark.description);
+	}, [currentLandMark])
+
+	return (
+	<div id="main">
+		<select id="state" onChange = {handleStateChange} >
+			{loadStates()}
+		</select>
+		<br></br>
+		<select id="city" onChange = {handleCityChange} >		
+			{loadCities()}
+		</select>
+		<br></br>
+		<select id="landmark" onChange = {handleLandmarkChange} >
+			{loadLandmarks()}
+		</select>
+
+
+		<div>
+			<div className = "state">
+				<h2 id="state-title">{currentState.name}</h2>
+				<p id="state-description">{stateDescription}</p>
+			</div>
+
+			<div className = "city">
+				<h2 id="city-title">{currentCity.name}</h2>
+				<p id="city-description">{cityDescription}</p>
+			</div>
+
+
+			<div className = "landmark">
+				<h2 id="landmark-title">{currentLandMark.name}</h2>
+				<p id="landmark-description">{landmarkDescription}</p>
+			</div>
+
+		</div>
+	</div>
+	);
+}
 
 export default App;
